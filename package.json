@@ -1,0 +1,21 @@
+{
+  "name": "express-class-controller",
+  "version": "4.11.2",
+  "description": "Routing requests to the classes.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ultimaweapon/express-class-controller.git"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "@types/express": "^4.11.1"
+  },
+  "devDependencies": {
+    "typescript": "^2.8.1"
+  },
+  "scripts": {
+    "build": "tsc"
+  }
+}
