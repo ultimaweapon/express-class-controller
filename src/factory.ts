@@ -28,7 +28,7 @@ export abstract class Factory {
     return (req, res, next) => {
       let instance = this.createController<T>(controller);
       let handler = selector(instance)
-      return handler(req, res, next)
+      return handler.bind(instance)(req, res, next)
     }
   }
 
