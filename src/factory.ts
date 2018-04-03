@@ -1,35 +1,41 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express'
 
 /**
- * The callback to provide a method to handle requests.
+ * Represents any class constructor.
+ */
+export interface Constructor<T> {
+  new(...args: any[]): T
+}
+
+/**
+ * Represents the callback to provide a method to handle requests.
  */
 export type RequestHandlerSelector<T> = (controller: T) => RequestHandler
 
 /**
- * Base class for controllers factory.
+ * Base class for controller factory.
  */
 export abstract class Factory {
   /**
-   * Get a request handler for passing to Express.
+   * Get a request handler.
    *
-   * @param selector A call back to provide a method to handler requests.
+   * @param controller identifier for the controller to handle requests.
+   * @param selector callback to provide a method to handle requests.
    */
-  public requestHandler<T>(selector: RequestHandlerSelector<T>): RequestHandler {
-    return (req, res, next) => this.executeRequestHandler(selector, req, res, next)
+  public requestHandler<T>(
+    controller: Symbol | string | Constructor<T>,
+    selector: RequestHandlerSelector<T>): RequestHandler {
+    return (req, res, next) => {
+      let instance = this.createController<T>(controller);
+      let handler = selector(instance)
+      return handler(req, res, next)
+    }
   }
 
   /**
    * Create a new controller to handle request.
+   *
+   * @param id controller identifier.
    */
-  protected abstract createController<T>(): T;
-
-  private executeRequestHandler<T>(
-    selector: RequestHandlerSelector<T>,
-    req: Request,
-    res: Response,
-    next: NextFunction): any {
-    let controller = this.createController<T>();
-    let handler = selector(controller)
-    return handler(req, res, next)
-  }
+  protected abstract createController<T>(id: Symbol | string | Constructor<T>): T;
 }
