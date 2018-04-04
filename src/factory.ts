@@ -1,13 +1,6 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express'
 
 /**
- * Represents any class constructor.
- */
-export interface Constructor<T> {
-  new(...args: any[]): T
-}
-
-/**
  * Represents the callback to provide a method to handle requests.
  */
 export type RequestHandlerSelector<T> = (controller: T) => RequestHandler
@@ -19,12 +12,13 @@ export abstract class Factory {
   /**
    * Get a request handler.
    *
-   * @param controller identifier for the controller to handle requests.
+   * @param controller identifier of the controller to handle requests.
    * @param selector callback to provide a method to handle requests.
    */
   public requestHandler<T>(
-    controller: Symbol | string | Constructor<T>,
-    selector: RequestHandlerSelector<T>): RequestHandler {
+    controller: Symbol | string | { new(...args: any[]): T },
+    selector: RequestHandlerSelector<T>
+  ): RequestHandler {
     return (req, res, next) => {
       let instance = this.createController<T>(controller);
       let handler = selector(instance)
@@ -37,5 +31,5 @@ export abstract class Factory {
    *
    * @param id controller identifier.
    */
-  protected abstract createController<T>(id: Symbol | string | Constructor<T>): T;
+  protected abstract createController<T>(id: Symbol | string | { new(...args: any[]): T }): T;
 }
