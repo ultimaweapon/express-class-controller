@@ -1,6 +1,6 @@
 {
   "name": "express-class-controller",
-  "version": "4.11.8",
+  "version": "4.11.9",
   "description": "Routing requests to the classes.",
   "license": "MIT",
   "repository": {

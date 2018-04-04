@@ -16,7 +16,7 @@ export abstract class Factory {
    * @param selector callback to provide a method to handle requests.
    */
   public requestHandler<T>(
-    controller: Symbol | string | { new(...args: any[]): T },
+    controller: symbol | string | { new(...args: any[]): T },
     selector: RequestHandlerSelector<T>
   ): RequestHandler {
     return (req, res, next) => {
@@ -31,5 +31,5 @@ export abstract class Factory {
    *
    * @param id controller identifier.
    */
-  protected abstract createController<T>(id: Symbol | string | { new(...args: any[]): T }): T;
+  protected abstract createController<T>(id: symbol | string | { new(...args: any[]): T }): T;
 }
