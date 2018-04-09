@@ -1,9 +1,14 @@
-import { Request, Response, NextFunction, RequestHandler } from 'express'
+import { Request, Response, NextFunction, RequestHandler, ErrorRequestHandler } from 'express'
 
 /**
- * Represents the callback to provide a method to handle requests.
+ * Represents a callback to provide a method to handle requests.
  */
 export type RequestHandlerSelector<T> = (controller: T) => RequestHandler
+
+/**
+ * Represents a callback to provide a method to handle errors.
+ */
+export type ErrorHandlerSelector<T> = (controller: T) => ErrorRequestHandler
 
 /**
  * Base class for controller factory.
@@ -12,7 +17,7 @@ export abstract class Factory {
   /**
    * Get a request handler.
    *
-   * @param controller identifier of the controller to handle requests.
+   * @param controller identifier of a controller to handle requests.
    * @param selector callback to provide a method to handle requests.
    */
   public requestHandler<T>(
@@ -20,9 +25,26 @@ export abstract class Factory {
     selector: RequestHandlerSelector<T>
   ): RequestHandler {
     return (req, res, next) => {
-      let instance = this.createController<T>(controller);
+      let instance = this.createController<T>(controller)
       let handler = selector(instance)
       return handler.bind(instance)(req, res, next)
+    }
+  }
+
+  /**
+   * Get an error handler.
+   *
+   * @param controller identifier of a controller to handle requests.
+   * @param selector callback to provide a method to handle requests.
+   */
+  public errorHandler<T>(
+    controller: symbol | string | { new(...args: any[]): T },
+    selector: ErrorHandlerSelector<T>
+  ): ErrorRequestHandler {
+    return (err, req, res, next) => {
+      let instance = this.createController<T>(controller)
+      let handler = selector(instance)
+      return handler.bind(instance)(err, req, res, next)
     }
   }
 
